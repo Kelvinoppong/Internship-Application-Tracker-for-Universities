@@ -126,3 +126,6 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 - Integration with job boards
 - Mobile application
 - Analytics dashboard improvements 
+
+##Author Contact
+- Name: Kelvin Oppong Acheampong
