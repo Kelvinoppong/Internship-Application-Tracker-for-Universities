@@ -66,3 +66,4 @@
 - Test both student and admin roles
 - Consider adding email verification in the future 
 - Make sure Omari pull a request to contribute
+-I will be hosting it using render so keep it in mind
