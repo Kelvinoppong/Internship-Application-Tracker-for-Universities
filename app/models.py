@@ -5,10 +5,9 @@ from app import db, login
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(64), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(128))
-    is_admin = db.Column(db.Boolean, default=False)
+    role = db.Column(db.String(20), nullable=False, default='student')
     applications = db.relationship('Application', backref='applicant', lazy='dynamic')
 
     def set_password(self, password):
@@ -16,6 +15,12 @@ class User(UserMixin, db.Model):
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+    def is_admin(self):
+        return self.role == 'admin'
+
+    def __repr__(self):
+        return f'<User {self.email}>'
 
 class Application(db.Model):
     id = db.Column(db.Integer, primary_key=True)
