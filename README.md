@@ -129,3 +129,4 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ##Author Contact
 - Name: Kelvin Oppong Acheampong
+-Linkedln: https://www.linkedin.com/in/kelvin-oppong-acheampong-936149309/
