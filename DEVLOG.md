@@ -65,3 +65,4 @@
 - Remember to run database migrations after model changes
 - Test both student and admin roles
 - Consider adding email verification in the future 
+- Make sure Omari pull a request to contribute
