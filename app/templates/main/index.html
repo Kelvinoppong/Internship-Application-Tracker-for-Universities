@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+<div class="container">
+    <div class="jumbotron text-center">
+        <h1 class="display-4">Welcome to Internship Tracker</h1>
+        <p class="lead">Track your internship applications, manage deadlines, and get insights into your application process.</p>
+        <hr class="my-4">
+        <p>Get started by logging in or creating a new account.</p>
+        <p class="lead">
+            <a class="btn btn-primary btn-lg mr-2" href="{{ url_for('auth.login') }}" role="button">Login</a>
+            <a class="btn btn-success btn-lg" href="{{ url_for('auth.register') }}" role="button">Register</a>
+        </p>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Track Applications</h5>
+                    <p class="card-text">Keep track of all your internship applications in one place. Never miss a deadline!</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Get Insights</h5>
+                    <p class="card-text">View statistics and insights about your application process and success rate.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Stay Organized</h5>
+                    <p class="card-text">Manage your applications, deadlines, and interview schedules efficiently.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.jumbotron {
+    background-color: #f8f9fa;
+    padding: 4rem 2rem;
+    margin-bottom: 2rem;
+    border-radius: .3rem;
+}
+.card {
+    margin-bottom: 20px;
+    transition: transform .2s;
+}
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 .5rem 1rem rgba(0,0,0,.15);
+}
+</style>
+{% endblock %} 

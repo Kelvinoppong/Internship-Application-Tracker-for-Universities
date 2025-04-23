@@ -38,32 +38,47 @@
    - Created registration template
    - Integrated flash messages for user feedback
 
+## Day 2 (Dashboard Implementation) - [Current Date]
+
+### Student Dashboard Development
+1. Created Main Routes
+   - Implemented dashboard route with authentication required
+   - Added application statistics calculation
+   - Set up index route with redirect to dashboard for authenticated users
+
+2. Dashboard Template
+   - Created responsive dashboard layout
+   - Implemented statistics cards showing:
+     - Total applications
+     - Pending applications
+     - Interview status
+     - Offers received
+   - Added applications table with:
+     - Company and position details
+     - Application status with color coding
+     - Deadline and submission dates
+     - Action buttons (Edit, View, Delete)
+   - Implemented delete confirmation modal
+   - Added custom styling for better user experience
+
+3. Landing Page
+   - Created welcoming index page for non-authenticated users
+   - Added feature highlights
+   - Implemented call-to-action buttons
+   - Added hover effects and animations
+
 ### Next Steps
-- [ ] Implement main application routes
-- [ ] Create internship application form
-- [ ] Design student dashboard
-- [ ] Develop admin dashboard
+- [ ] Implement application form for adding/editing applications
+- [ ] Add application detail view
+- [ ] Create admin dashboard
 - [ ] Add interview tips section
 - [ ] Implement data export functionality
-
-## Day 2 (Planned)
-- Main application routes implementation
-- Internship tracking functionality
-- Dashboard development
-
-## Day 3 (Planned)
-- Admin features
-- Statistics and reporting
-- Data export functionality
-
-## Day 4 (Planned)
-- Interview tips section
-- UI/UX improvements
-- Testing and bug fixes
 
 ## Notes
 - Remember to run database migrations after model changes
 - Test both student and admin roles
-- Consider adding email verification in the future 
+- Consider adding email verification in the future
 - Make sure Omari pull a request to contribute
--I will be hosting it using render so keep it in mind
+- Will be hosting it using render so keep it in mind
+- Consider adding sorting and filtering options to the applications table
+- Add pagination for large numbers of applications

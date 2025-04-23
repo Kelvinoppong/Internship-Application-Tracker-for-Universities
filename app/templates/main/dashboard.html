@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h1>My Dashboard</h1>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card text-white bg-primary">
+                <div class="card-body">
+                    <h5 class="card-title">Total Applications</h5>
+                    <h2 class="card-text">{{ stats.total }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-warning">
+                <div class="card-body">
+                    <h5 class="card-title">Pending</h5>
+                    <h2 class="card-text">{{ stats.pending }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-info">
+                <div class="card-body">
+                    <h5 class="card-title">Interviews</h5>
+                    <h2 class="card-text">{{ stats.interviews }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-success">
+                <div class="card-body">
+                    <h5 class="card-title">Offers</h5>
+                    <h2 class="card-text">{{ stats.offers }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Applications Table -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h3 class="mb-0">My Applications</h3>
+                    <a href="{{ url_for('main.add_application') }}" class="btn btn-primary">Add New Application</a>
+                </div>
+                <div class="card-body">
+                    {% if applications %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Company</th>
+                                    <th>Position</th>
+                                    <th>Status</th>
+                                    <th>Deadline</th>
+                                    <th>Date Applied</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for app in applications %}
+                                <tr>
+                                    <td>{{ app.company_name }}</td>
+                                    <td>{{ app.position }}</td>
+                                    <td>
+                                        <span class="badge 
+                                            {% if app.status == 'Offer' %}badge-success
+                                            {% elif app.status == 'Interview' %}badge-info
+                                            {% elif app.status == 'Pending' %}badge-warning
+                                            {% else %}badge-secondary{% endif %}">
+                                            {{ app.status }}
+                                        </span>
+                                    </td>
+                                    <td>{{ app.deadline.strftime('%Y-%m-%d') if app.deadline }}</td>
+                                    <td>{{ app.date_applied.strftime('%Y-%m-%d') }}</td>
+                                    <td>
+                                        <a href="{{ url_for('main.edit_application', id=app.id) }}" class="btn btn-sm btn-primary">Edit</a>
+                                        <a href="{{ url_for('main.view_application', id=app.id) }}" class="btn btn-sm btn-info">View</a>
+                                        <button type="button" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#deleteModal{{ app.id }}">
+                                            Delete
+                                        </button>
+                                    </td>
+                                </tr>
+
+                                <!-- Delete Modal -->
+                                <div class="modal fade" id="deleteModal{{ app.id }}" tabindex="-1" role="dialog">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">Confirm Delete</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                Are you sure you want to delete the application for {{ app.position }} at {{ app.company_name }}?
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                                <form action="{{ url_for('main.delete_application', id=app.id) }}" method="post" style="display: inline;">
+                                                    <input type="submit" class="btn btn-danger" value="Delete">
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-5">
+                        <h4>No applications yet</h4>
+                        <p>Start tracking your internship applications by clicking the button above!</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Custom CSS -->
+<style>
+.card {
+    margin-bottom: 20px;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+.bg-primary, .bg-warning, .bg-info, .bg-success {
+    color: white;
+}
+.badge {
+    padding: 8px 12px;
+    font-size: 0.9em;
+}
+.table th {
+    border-top: none;
+}
+</style>
+{% endblock %} 
