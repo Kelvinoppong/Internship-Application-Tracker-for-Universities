@@ -1,0 +1,204 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h1>Admin Dashboard</h1>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card text-white bg-primary">
+                <div class="card-body">
+                    <h5 class="card-title">Total Students</h5>
+                    <h2 class="card-text">{{ stats.total_students }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-success">
+                <div class="card-body">
+                    <h5 class="card-title">Total Applications</h5>
+                    <h2 class="card-text">{{ stats.total_applications }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-info">
+                <div class="card-body">
+                    <h5 class="card-title">Companies</h5>
+                    <h2 class="card-text">{{ stats.total_companies }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-warning">
+                <div class="card-body">
+                    <h5 class="card-title">Success Rate</h5>
+                    <h2 class="card-text">{{ stats.success_rate }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filters and Export -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <form method="get" class="form-inline">
+                        <div class="form-group mx-2">
+                            <label for="student_id" class="mr-2">Student:</label>
+                            <select name="student_id" id="student_id" class="form-control">
+                                <option value="">All Students</option>
+                                {% for student in students %}
+                                <option value="{{ student.id }}" {% if selected_student == student.id %}selected{% endif %}>
+                                    {{ student.email }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group mx-2">
+                            <label for="company" class="mr-2">Company:</label>
+                            <input type="text" name="company" id="company" class="form-control" 
+                                   value="{{ selected_company }}" placeholder="Filter by company">
+                        </div>
+                        <div class="form-group mx-2">
+                            <label for="status" class="mr-2">Status:</label>
+                            <select name="status" id="status" class="form-control">
+                                <option value="">All Statuses</option>
+                                {% for status in statuses %}
+                                <option value="{{ status }}" {% if selected_status == status %}selected{% endif %}>
+                                    {{ status }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary mx-2">Apply Filters</button>
+                        <a href="{{ url_for('main.admin_dashboard') }}" class="btn btn-secondary mx-2">Clear Filters</a>
+                        <a href="{{ url_for('main.export_data') }}" class="btn btn-success mx-2">Export to Excel</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Applications Table -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="mb-0">Applications</h3>
+                </div>
+                <div class="card-body">
+                    {% if applications %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Student</th>
+                                    <th>Company</th>
+                                    <th>Position</th>
+                                    <th>Status</th>
+                                    <th>Date Applied</th>
+                                    <th>Deadline</th>
+                                    <th>Notes</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for app in applications %}
+                                <tr>
+                                    <td>{{ app.applicant.email }}</td>
+                                    <td>{{ app.company_name }}</td>
+                                    <td>{{ app.position }}</td>
+                                    <td>
+                                        <span class="badge 
+                                            {% if app.status == 'Offer' %}badge-success
+                                            {% elif app.status == 'Interview' %}badge-info
+                                            {% elif app.status == 'Pending' %}badge-warning
+                                            {% elif app.status == 'Rejected' %}badge-danger
+                                            {% else %}badge-secondary{% endif %}">
+                                            {{ app.status }}
+                                        </span>
+                                    </td>
+                                    <td>{{ app.date_applied.strftime('%Y-%m-%d') }}</td>
+                                    <td>{{ app.deadline.strftime('%Y-%m-%d') if app.deadline }}</td>
+                                    <td>
+                                        {% if app.notes %}
+                                        <button type="button" class="btn btn-sm btn-info" data-toggle="modal" 
+                                                data-target="#notesModal{{ app.id }}">
+                                            View Notes
+                                        </button>
+                                        
+                                        <!-- Notes Modal -->
+                                        <div class="modal fade" id="notesModal{{ app.id }}" tabindex="-1" role="dialog">
+                                            <div class="modal-dialog" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title">Notes for {{ app.company_name }}</h5>
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        {{ app.notes|nl2br }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-5">
+                        <h4>No applications found</h4>
+                        <p>Try adjusting your filters to see more results.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Custom CSS -->
+<style>
+.card {
+    margin-bottom: 20px;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+.bg-primary, .bg-success, .bg-info, .bg-warning {
+    color: white;
+}
+.badge {
+    padding: 8px 12px;
+    font-size: 0.9em;
+}
+.table th {
+    border-top: none;
+}
+.form-inline .form-group {
+    margin-bottom: 1rem;
+}
+@media (max-width: 768px) {
+    .form-inline {
+        flex-direction: column;
+    }
+    .form-inline .form-group {
+        width: 100%;
+        margin-right: 0 !important;
+    }
+    .form-inline .btn {
+        width: 100%;
+        margin: 0.5rem 0 !important;
+    }
+}
+</style>
+{% endblock %} 
