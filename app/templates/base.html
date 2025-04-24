@@ -1,5 +1,105 @@
 {% extends 'bootstrap/base.html' %}
 
+{% block styles %}
+    {{ super() }}
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4f46e5;
+            --secondary-color: #818cf8;
+            --background-color: #f3f4f6;
+            --text-color: #1f2937;
+            --card-bg: #ffffff;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+        }
+
+        .navbar {
+            background-color: var(--card-bg);
+            border: none;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .navbar-default .navbar-brand,
+        .navbar-default .navbar-nav > li > a {
+            color: var(--text-color);
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .navbar-default .navbar-brand:hover,
+        .navbar-default .navbar-nav > li > a:hover {
+            color: var(--primary-color);
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn {
+            border-radius: 8px;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+            transform: translateY(-2px);
+        }
+
+        .alert {
+            border-radius: 8px;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .form-control {
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+            padding: 0.75rem;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.1);
+        }
+    </style>
+{% endblock %}
+
 {% block title %}
     {% if title %}{{ title }} - Internship Tracker{% else %}Welcome to Internship Tracker{% endif %}
 {% endblock %}
@@ -14,24 +114,26 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="{{ url_for('main.index') }}">Internship Tracker</a>
+                <a class="navbar-brand" href="{{ url_for('main.index') }}">
+                    <i class="fas fa-briefcase"></i> Internship Tracker
+                </a>
             </div>
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
-                    <li><a href="{{ url_for('main.index') }}">Home</a></li>
+                    <li><a href="{{ url_for('main.index') }}"><i class="fas fa-home"></i> Home</a></li>
                     {% if current_user.is_authenticated %}
-                        <li><a href="{{ url_for('main.dashboard') }}">Dashboard</a></li>
+                        <li><a href="{{ url_for('main.dashboard') }}"><i class="fas fa-chart-line"></i> Dashboard</a></li>
                         {% if current_user.is_admin() %}
-                            <li><a href="{{ url_for('main.admin_dashboard') }}">Admin Dashboard</a></li>
+                            <li><a href="{{ url_for('main.admin_dashboard') }}"><i class="fas fa-user-shield"></i> Admin</a></li>
                         {% endif %}
                     {% endif %}
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     {% if current_user.is_authenticated %}
-                        <li><a href="{{ url_for('auth.logout') }}">Logout</a></li>
+                        <li><a href="{{ url_for('auth.logout') }}"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
                     {% else %}
-                        <li><a href="{{ url_for('auth.login') }}">Login</a></li>
-                        <li><a href="{{ url_for('auth.register') }}">Register</a></li>
+                        <li><a href="{{ url_for('auth.login') }}"><i class="fas fa-sign-in-alt"></i> Login</a></li>
+                        <li><a href="{{ url_for('auth.register') }}"><i class="fas fa-user-plus"></i> Register</a></li>
                     {% endif %}
                 </ul>
             </div>
@@ -41,14 +143,41 @@
 
 {% block content %}
     <div class="container">
-        {% with messages = get_flashed_messages() %}
-        {% if messages %}
-            {% for message in messages %}
-            <div class="alert alert-info" role="alert">{{ message }}</div>
-            {% endfor %}
-        {% endif %}
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category if category != 'message' else 'info' }} alert-dismissible" role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
         {% endwith %}
 
         {% block app_content %}{% endblock %}
     </div>
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+    <script>
+        // Add smooth scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Auto-hide alerts after 5 seconds
+        window.setTimeout(function() {
+            $(".alert").fadeTo(500, 0).slideUp(500, function(){
+                $(this).remove(); 
+            });
+        }, 5000);
+    </script>
 {% endblock %} 

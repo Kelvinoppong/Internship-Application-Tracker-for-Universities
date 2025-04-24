@@ -1,92 +1,102 @@
 {% extends "base.html" %}
 
 {% block app_content %}
-<div class="container">
-    <div class="row">
+<div class="dashboard-container">
+    <div class="row mb-4">
         <div class="col-md-12">
-            <h1>My Dashboard</h1>
+            <h1 class="dashboard-title">
+                <i class="fas fa-tachometer-alt"></i> My Dashboard
+                <a href="{{ url_for('main.add_application') }}" class="btn btn-primary float-right">
+                    <i class="fas fa-plus"></i> New Application
+                </a>
+            </h1>
         </div>
     </div>
 
     <!-- Statistics Cards -->
-    <div class="row mb-4">
+    <div class="row stats-container">
         <div class="col-md-3">
-            <div class="card text-white bg-primary">
-                <div class="card-body">
-                    <h5 class="card-title">Total Applications</h5>
-                    <h2 class="card-text">{{ stats.total }}</h2>
+            <div class="stat-card total-apps">
+                <div class="stat-icon">
+                    <i class="fas fa-briefcase"></i>
+                </div>
+                <div class="stat-details">
+                    <h3>Total Applications</h3>
+                    <h2 class="counter">{{ stats.total }}</h2>
                 </div>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card text-white bg-warning">
-                <div class="card-body">
-                    <h5 class="card-title">Pending</h5>
-                    <h2 class="card-text">{{ stats.pending }}</h2>
+            <div class="stat-card pending">
+                <div class="stat-icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="stat-details">
+                    <h3>Pending</h3>
+                    <h2 class="counter">{{ stats.pending }}</h2>
                 </div>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card text-white bg-info">
-                <div class="card-body">
-                    <h5 class="card-title">Interviews</h5>
-                    <h2 class="card-text">{{ stats.interviews }}</h2>
+            <div class="stat-card interviews">
+                <div class="stat-icon">
+                    <i class="fas fa-user-tie"></i>
+                </div>
+                <div class="stat-details">
+                    <h3>Interviews</h3>
+                    <h2 class="counter">{{ stats.interviews }}</h2>
                 </div>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card text-white bg-success">
-                <div class="card-body">
-                    <h5 class="card-title">Offers</h5>
-                    <h2 class="card-text">{{ stats.offers }}</h2>
+            <div class="stat-card offers">
+                <div class="stat-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="stat-details">
+                    <h3>Offers</h3>
+                    <h2 class="counter">{{ stats.offers }}</h2>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Applications Table -->
-    <div class="row">
+    <div class="row mt-4">
         <div class="col-md-12">
-            <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h3 class="mb-0">My Applications</h3>
-                    <a href="{{ url_for('main.add_application') }}" class="btn btn-primary">Add New Application</a>
-                </div>
+            <div class="card applications-card">
                 <div class="card-body">
                     {% if applications %}
                     <div class="table-responsive">
                         <table class="table table-hover">
                             <thead>
                                 <tr>
-                                    <th>Company</th>
-                                    <th>Position</th>
-                                    <th>Status</th>
-                                    <th>Deadline</th>
-                                    <th>Date Applied</th>
-                                    <th>Actions</th>
+                                    <th><i class="fas fa-building"></i> Company</th>
+                                    <th><i class="fas fa-briefcase"></i> Position</th>
+                                    <th><i class="fas fa-info-circle"></i> Status</th>
+                                    <th><i class="fas fa-calendar"></i> Deadline</th>
+                                    <th><i class="fas fa-clock"></i> Date Applied</th>
+                                    <th><i class="fas fa-cog"></i> Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {% for app in applications %}
-                                <tr>
+                                <tr class="application-row">
                                     <td>{{ app.company_name }}</td>
                                     <td>{{ app.position }}</td>
                                     <td>
-                                        <span class="badge 
-                                            {% if app.status == 'Offer' %}badge-success
-                                            {% elif app.status == 'Interview' %}badge-info
-                                            {% elif app.status == 'Pending' %}badge-warning
-                                            {% else %}badge-secondary{% endif %}">
+                                        <span class="status-badge status-{{ app.status.lower() }}">
                                             {{ app.status }}
                                         </span>
                                     </td>
                                     <td>{{ app.deadline.strftime('%Y-%m-%d') if app.deadline }}</td>
                                     <td>{{ app.date_applied.strftime('%Y-%m-%d') }}</td>
-                                    <td>
-                                        <a href="{{ url_for('main.edit_application', id=app.id) }}" class="btn btn-sm btn-primary">Edit</a>
-                                        <a href="{{ url_for('main.view_application', id=app.id) }}" class="btn btn-sm btn-info">View</a>
-                                        <button type="button" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#deleteModal{{ app.id }}">
-                                            Delete
+                                    <td class="actions">
+                                        <button class="btn btn-icon btn-primary" onclick="window.location.href='{{ url_for('main.edit_application', id=app.id) }}'">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn btn-icon btn-danger" data-toggle="modal" data-target="#deleteModal{{ app.id }}">
+                                            <i class="fas fa-trash"></i>
                                         </button>
                                     </td>
                                 </tr>
@@ -96,18 +106,26 @@
                                     <div class="modal-dialog" role="document">
                                         <div class="modal-content">
                                             <div class="modal-header">
-                                                <h5 class="modal-title">Confirm Delete</h5>
-                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <h5 class="modal-title">
+                                                    <i class="fas fa-exclamation-triangle text-danger"></i>
+                                                    Confirm Delete
+                                                </h5>
+                                                <button type="button" class="close" data-dismiss="modal">
                                                     <span aria-hidden="true">&times;</span>
                                                 </button>
                                             </div>
                                             <div class="modal-body">
-                                                Are you sure you want to delete the application for {{ app.position }} at {{ app.company_name }}?
+                                                <p>Are you sure you want to delete the application for <strong>{{ app.position }}</strong> at <strong>{{ app.company_name }}</strong>?</p>
+                                                <p class="text-muted">This action cannot be undone.</p>
                                             </div>
                                             <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                                                    <i class="fas fa-times"></i> Cancel
+                                                </button>
                                                 <form action="{{ url_for('main.delete_application', id=app.id) }}" method="post" style="display: inline;">
-                                                    <input type="submit" class="btn btn-danger" value="Delete">
+                                                    <button type="submit" class="btn btn-danger">
+                                                        <i class="fas fa-trash"></i> Delete
+                                                    </button>
                                                 </form>
                                             </div>
                                         </div>
@@ -118,9 +136,15 @@
                         </table>
                     </div>
                     {% else %}
-                    <div class="text-center py-5">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">
+                            <i class="fas fa-clipboard-list"></i>
+                        </div>
                         <h4>No applications yet</h4>
                         <p>Start tracking your internship applications by clicking the button above!</p>
+                        <a href="{{ url_for('main.add_application') }}" class="btn btn-primary btn-lg mt-3">
+                            <i class="fas fa-plus"></i> Add Your First Application
+                        </a>
                     </div>
                     {% endif %}
                 </div>
@@ -131,19 +155,271 @@
 
 <!-- Custom CSS -->
 <style>
-.card {
-    margin-bottom: 20px;
-    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+.dashboard-container {
+    padding: 2rem 0;
+    animation: fadeIn 0.5s ease;
 }
-.bg-primary, .bg-warning, .bg-info, .bg-success {
-    color: white;
+
+.dashboard-title {
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 2rem;
+    color: var(--text-color);
 }
-.badge {
-    padding: 8px 12px;
-    font-size: 0.9em;
+
+.stats-container {
+    margin-bottom: 2rem;
 }
+
+.stat-card {
+    background: var(--card-bg);
+    border-radius: 15px;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    margin-bottom: 1rem;
+    animation: slideIn 0.5s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+}
+
+.stat-icon {
+    font-size: 2.5rem;
+    margin-right: 1rem;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+}
+
+.total-apps .stat-icon {
+    background: rgba(79, 70, 229, 0.1);
+    color: var(--primary-color);
+}
+
+.pending .stat-icon {
+    background: rgba(245, 158, 11, 0.1);
+    color: #f59e0b;
+}
+
+.interviews .stat-icon {
+    background: rgba(59, 130, 246, 0.1);
+    color: #3b82f6;
+}
+
+.offers .stat-icon {
+    background: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+}
+
+.stat-details h3 {
+    font-size: 0.9rem;
+    color: #6b7280;
+    margin: 0;
+}
+
+.stat-details h2 {
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin: 0;
+    color: var(--text-color);
+}
+
+.applications-card {
+    background: var(--card-bg);
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    animation: slideUp 0.5s ease;
+}
+
+.table {
+    margin-bottom: 0;
+}
+
 .table th {
-    border-top: none;
+    font-weight: 600;
+    color: #6b7280;
+    border-bottom: 2px solid #e5e7eb;
+    padding: 1rem;
+}
+
+.table td {
+    padding: 1rem;
+    vertical-align: middle;
+}
+
+.application-row {
+    transition: background-color 0.3s ease;
+}
+
+.application-row:hover {
+    background-color: rgba(79, 70, 229, 0.05);
+}
+
+.status-badge {
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    display: inline-block;
+}
+
+.status-offer {
+    background: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+}
+
+.status-interview {
+    background: rgba(59, 130, 246, 0.1);
+    color: #3b82f6;
+}
+
+.status-pending {
+    background: rgba(245, 158, 11, 0.1);
+    color: #f59e0b;
+}
+
+.status-rejected {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+}
+
+.btn-icon {
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    margin: 0 0.25rem;
+    transition: transform 0.3s ease;
+}
+
+.btn-icon:hover {
+    transform: translateY(-2px);
+}
+
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+}
+
+.empty-state-icon {
+    font-size: 4rem;
+    color: #d1d5db;
+    margin-bottom: 1.5rem;
+}
+
+.empty-state h4 {
+    font-size: 1.5rem;
+    color: var(--text-color);
+    margin-bottom: 0.5rem;
+}
+
+.empty-state p {
+    color: #6b7280;
+    margin-bottom: 2rem;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.modal-content {
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.modal-header {
+    border-bottom: 1px solid #e5e7eb;
+    padding: 1.5rem;
+}
+
+.modal-body {
+    padding: 1.5rem;
+}
+
+.modal-footer {
+    border-top: 1px solid #e5e7eb;
+    padding: 1.5rem;
+}
+
+.counter {
+    animation: countUp 2s ease-out;
+}
+
+@keyframes countUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 </style>
+
+{% block scripts %}
+{{ super() }}
+<script>
+    // Initialize tooltips
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip();
+    });
+
+    // Add hover effect to table rows
+    $('.application-row').hover(
+        function() { $(this).addClass('hover'); },
+        function() { $(this).removeClass('hover'); }
+    );
+
+    // Add animation to counters
+    $('.counter').each(function () {
+        $(this).prop('Counter', 0).animate({
+            Counter: $(this).text()
+        }, {
+            duration: 2000,
+            easing: 'swing',
+            step: function (now) {
+                $(this).text(Math.ceil(now));
+            }
+        });
+    });
+</script>
+{% endblock %}
 {% endblock %} 
